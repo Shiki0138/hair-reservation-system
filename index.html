@@ -1,0 +1,77 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>美容室 予約システム</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>次回予約システム</h1>
+    <p class="explain">このページは美容師専用です。お客様の次回予約内容を入力し、下のQRコードをお客様に読み取ってもらってください。<br>お客様はQRコードを読み取ることで、ご自身のカレンダーに予約を簡単に登録できます。</p>
+    <section class="appointment-form">
+      <div class="menu-list">
+        <label>
+          <input type="checkbox" class="menu-checkbox" data-price="3000">
+          <span class="menu-name">カット</span>
+          <span class="price">¥3000</span>
+        </label>
+        <label>
+          <input type="checkbox" class="menu-checkbox" data-price="5000">
+          <span class="menu-name">カラー</span>
+          <span class="price">¥5000</span>
+        </label>
+        <label>
+          <input type="checkbox" class="menu-checkbox" data-price="20000">
+          <span class="menu-name">髪質改善ストレート</span>
+          <span class="price">¥20000</span>
+        </label>
+        <label>
+          <input type="checkbox" class="menu-checkbox" data-price="15000">
+          <span class="menu-name">髪質改善トリートメント</span>
+          <span class="price">¥15000</span>
+        </label>
+        <label class="other-menu stylish-other-menu">
+          <input type="checkbox" class="menu-checkbox other-checkbox" id="other-checkbox" data-price="0">
+          <span class="menu-name">その他</span>
+          <input type="number" id="other-price" class="other-price-input" min="0" placeholder="金額を入力" style="margin-left:1rem; width:110px;">
+        </label>
+      </div>
+      <div class="form-group">
+        <label>小計</label>
+        <div id="subtotal" class="value">¥0</div>
+      </div>
+      <div class="form-group">
+        <label for="discount">割引額</label>
+        <input type="number" id="discount" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label>合計</label>
+        <div id="total" class="value">¥0</div>
+      </div>
+      <div class="form-group">
+        <label for="date">次回来店日</label>
+        <input type="date" id="date">
+      </div>
+      <div class="form-group time-group">
+        <label for="start-time">開始時間</label>
+        <input type="time" id="start-time" step="1800">
+        <label for="end-time">終了時間</label>
+        <input type="time" id="end-time" step="1800">
+      </div>
+      <div class="form-group">
+        <button id="generate-btn" type="button">QRコード生成</button>
+      </div>
+      <div class="form-group qr-group">
+        <label>カレンダー登録QRコード</label>
+        <div id="qrcode"></div>
+      </div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
