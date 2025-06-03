@@ -12,6 +12,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // その他用
     const otherCheckbox = document.getElementById('other-checkbox');
     const otherPriceInput = document.getElementById('other-price');
+    const straightCheckbox = document.getElementById('straight-checkbox');
+    const treatmentCheckbox = document.getElementById('treatment-checkbox');
+
+    function updateNextVisitDate() {
+      let monthsToAdd = 1;
+      if (straightCheckbox && straightCheckbox.checked) {
+        monthsToAdd = 6;
+      } else if (treatmentCheckbox && treatmentCheckbox.checked) {
+        monthsToAdd = 2;
+      }
+      const nextDate = new Date();
+      nextDate.setMonth(nextDate.getMonth() + monthsToAdd);
+      const pad = (n) => n.toString().padStart(2, '0');
+      const formatted = `${nextDate.getFullYear()}-${pad(nextDate.getMonth() + 1)}-${pad(nextDate.getDate())}`;
+      dateEl.value = formatted;
+    }
 
 
   
@@ -63,7 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
       qrcodeContainer.appendChild(img);
     }
   
-    checkboxes.forEach(cb => cb.addEventListener('change', calculateAmounts));
+    checkboxes.forEach(cb => cb.addEventListener('change', () => {
+      calculateAmounts();
+      updateNextVisitDate();
+    }));
     discountEl.addEventListener('input', calculateAmounts);
     // その他の金額入力時も再計算
     if (otherPriceInput) {
@@ -73,12 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
           otherCheckbox.checked = true;
         }
         calculateAmounts();
+        updateNextVisitDate();
       });
     }
     if (otherCheckbox) {
-      otherCheckbox.addEventListener('change', calculateAmounts);
+      otherCheckbox.addEventListener('change', () => {
+        calculateAmounts();
+        updateNextVisitDate();
+      });
     }
     // 開始時間・終了時間は input の step 属性で 30 分単位としている
+    // 初期表示用に日付を更新
+    updateNextVisitDate();
+
     if (generateBtn) {
       generateBtn.addEventListener('click', () => {
         generateQRCode();
