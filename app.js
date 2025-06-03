@@ -15,20 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setDateByMenu() {
       const today = new Date();
-      let minMonths = null;
+      // default 1 month later for cut/color only
+      let months = 1;
       checkboxes.forEach(cb => {
         if (cb.checked && cb.dataset.months) {
           const m = parseInt(cb.dataset.months, 10);
-          if (isNaN(m)) return;
-          if (minMonths === null || m < minMonths) {
-            minMonths = m;
+          if (!isNaN(m) && m > months) {
+            months = m;
           }
         }
       });
       const target = new Date(today);
-      if (minMonths !== null) {
-        target.setMonth(target.getMonth() + minMonths);
-      }
+      target.setMonth(target.getMonth() + months);
       dateEl.value = target.toISOString().split('T')[0];
     }
 
