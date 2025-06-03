@@ -13,6 +13,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const otherCheckbox = document.getElementById('other-checkbox');
     const otherPriceInput = document.getElementById('other-price');
 
+    function setDateByMenu() {
+      const today = new Date();
+      // default 1 month later for cut/color only
+      let months = 1;
+      checkboxes.forEach(cb => {
+        if (cb.checked && cb.dataset.months) {
+          const m = parseInt(cb.dataset.months, 10);
+          if (!isNaN(m) && m > months) {
+            months = m;
+          }
+        }
+      });
+      const target = new Date(today);
+      target.setMonth(target.getMonth() + months);
+      dateEl.value = target.toISOString().split('T')[0];
+    }
+
     function adjustToHalfHour(input) {
       const val = input.value;
       if (!val) return;
@@ -53,20 +70,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // QRコードを生成して表示
     function generateQRCode() {
       qrcodeContainer.innerHTML = '';
-      // Googleカレンダー登録用URLを生成
       const title = 'サロン予約';
       const date = dateEl.value.replace(/-/g, '');
-      const startTime = document.getElementById('start-time').value;
-      const endTime = document.getElementById('end-time').value;
+      const startTime = startTimeEl.value;
+      const endTime = endTimeEl.value;
       if (!date || !startTime || !endTime) {
         alert('日付・開始時間・終了時間をすべて入力してください');
         return;
       }
       const dtStart = `${date}T${startTime.replace(':', '')}00`;
       const dtEnd = `${date}T${endTime.replace(':', '')}00`;
-      // 通知3日前
-      const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${dtStart}/${dtEnd}&trp=3d0m0s`;
-      // qriousでQRコード生成
+
+      const menuNames = [];
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const label = cb.closest('label');
+          const nameEl = label ? label.querySelector('.menu-name') : null;
+          if (nameEl) {
+            menuNames.push(nameEl.textContent.trim());
+          }
+        }
+      });
+      const details = menuNames.join(', ');
+
+      const icsLines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//hair-reservation-system//EN',
+        'BEGIN:VEVENT',
+        `SUMMARY:${title}`,
+        `DESCRIPTION:${details}`,
+        `DTSTART:${dtStart}`,
+        `DTEND:${dtEnd}`,
+        'BEGIN:VALARM',
+        'TRIGGER:-P3D',
+        'ACTION:DISPLAY',
+        'DESCRIPTION:Reminder',
+        'END:VALARM',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ];
+      const icsData = icsLines.join('\r\n');
+      const url = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsData)}`;
+
       const qr = new QRious({
         value: url,
         size: 300,
@@ -77,7 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
       qrcodeContainer.appendChild(img);
     }
   
-    checkboxes.forEach(cb => cb.addEventListener('change', calculateAmounts));
+    checkboxes.forEach(cb => cb.addEventListener('change', () => {
+      calculateAmounts();
+      setDateByMenu();
+    }));
     discountEl.addEventListener('input', calculateAmounts);
     // その他の金額入力時も再計算
     if (otherPriceInput) {
@@ -103,4 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
         generateQRCode();
       });
     }
+
+    setDateByMenu();
   });
