@@ -4,13 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const discountEl = document.getElementById('discount');
     const totalEl = document.getElementById('total');
     const dateEl = document.getElementById('date');
-    const timeEl = document.getElementById('start-time');
+    const startTimeEl = document.getElementById('start-time');
+    const endTimeEl = document.getElementById('end-time');
     const qrcodeContainer = document.getElementById('qrcode');
     const generateBtn = document.getElementById('generate-btn');
     const downloadIcsBtn = document.getElementById('download-ics-btn');
     // その他用
     const otherCheckbox = document.getElementById('other-checkbox');
     const otherPriceInput = document.getElementById('other-price');
+
+
   
     // 小計と合計を計算して表示
     function calculateAmounts() {
@@ -75,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (otherCheckbox) {
       otherCheckbox.addEventListener('change', calculateAmounts);
     }
+    // 開始時間・終了時間は input の step 属性で 30 分単位としている
     if (generateBtn) {
       generateBtn.addEventListener('click', () => {
         generateQRCode();
