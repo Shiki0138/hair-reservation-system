@@ -4,13 +4,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const discountEl = document.getElementById('discount');
     const totalEl = document.getElementById('total');
     const dateEl = document.getElementById('date');
-    const timeEl = document.getElementById('start-time');
+    const startTimeEl = document.getElementById('start-time');
+    const endTimeEl = document.getElementById('end-time');
     const qrcodeContainer = document.getElementById('qrcode');
     const generateBtn = document.getElementById('generate-btn');
     const downloadIcsBtn = document.getElementById('download-ics-btn');
     // その他用
     const otherCheckbox = document.getElementById('other-checkbox');
     const otherPriceInput = document.getElementById('other-price');
+
+    function adjustToHalfHour(input) {
+      const val = input.value;
+      if (!val) return;
+      const [hStr, mStr] = val.split(':');
+      let h = parseInt(hStr, 10);
+      let m = parseInt(mStr, 10);
+      const rounded = Math.round(m / 30) * 30;
+      if (rounded === 60) {
+        h = (h + 1) % 24;
+        m = 0;
+      } else {
+        m = rounded;
+      }
+      input.value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    }
   
     // 小計と合計を計算して表示
     function calculateAmounts() {
@@ -74,6 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (otherCheckbox) {
       otherCheckbox.addEventListener('change', calculateAmounts);
+    }
+    if (startTimeEl) {
+      startTimeEl.addEventListener('change', () => adjustToHalfHour(startTimeEl));
+    }
+    if (endTimeEl) {
+      endTimeEl.addEventListener('change', () => adjustToHalfHour(endTimeEl));
     }
     if (generateBtn) {
       generateBtn.addEventListener('click', () => {
