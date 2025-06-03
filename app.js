@@ -116,8 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'END:VCALENDAR'
       ];
       const icsData = icsLines.join('\r\n');
-      const base64 = btoa(unescape(encodeURIComponent(icsData)));
-      const url = `data:text/calendar;charset=utf-8;base64,${base64}`;
+      const encoded = encodeURIComponent(icsData);
+      const url = `data:text/calendar;charset=utf-8,${encoded}`;
+
+      if (downloadIcsBtn) {
+        downloadIcsBtn.href = url;
+      }
 
       const qr = new QRious({
         value: url,
