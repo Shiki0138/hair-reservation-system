@@ -93,15 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const details = menuNames.join(', ');
 
+      const uid = `uid-${Date.now()}@hair-reservation-system`;
+      const dtStamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
       const icsLines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
         'PRODID:-//hair-reservation-system//EN',
+        'CALSCALE:GREGORIAN',
         'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${dtStamp}`,
         `SUMMARY:${title}`,
         `DESCRIPTION:${details}`,
-        `DTSTART:${dtStart}`,
-        `DTEND:${dtEnd}`,
+        `DTSTART;TZID=Asia/Tokyo:${dtStart}`,
+        `DTEND;TZID=Asia/Tokyo:${dtEnd}`,
         'BEGIN:VALARM',
         'TRIGGER:-P3D',
         'ACTION:DISPLAY',
@@ -111,7 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'END:VCALENDAR'
       ];
       const icsData = icsLines.join('\r\n');
-      const url = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsData)}`;
+      const base64 = btoa(unescape(encodeURIComponent(icsData)));
+      const url = `data:text/calendar;charset=utf-8;base64,${base64}`;
 
       const qr = new QRious({
         value: url,
